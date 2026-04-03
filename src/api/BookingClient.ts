@@ -17,10 +17,10 @@ export class BookingClient { // Define la clase para centralizar las operaciones
    * Verifica la disponibilidad de la API (Health Check).
    * @returns El estado de la respuesta.
    */
-  async checkHealth(): Promise<number> { // Método para validar que el servicio está arriba
+  async checkHealth(): Promise<number> { // Método para validar que el servicio está operativo (Bonus Point)
     const response = await this.request.get('/ping'); // Realiza una petición GET al endpoint de salud
-    expect(response.status(), 'API Health Check failed').toBe(201); // En Restful-Booker, ping devuelve 201
-    return response.status(); // Devuelve el código de estado obtenido
+    expect(response.status(), 'API Health Check failed').toBe(201); // En esta API, ping devuelve 201
+    return response.status(); // Devuelve el código de estado
   } // Finaliza el método de salud
 
   /**

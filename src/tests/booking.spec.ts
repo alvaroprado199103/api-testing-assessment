@@ -23,12 +23,12 @@ test.describe('Booking Management CRUD', () => { // Inicia la agrupación de cas
 
     // 2. ACCIÓN: Inicializamos el cliente y enviamos la petición a la API
     const bookingClient = new BookingClient(request); // Instancia el cliente de reservas pasando el contexto de petición actual
-    
-    await bookingClient.checkHealth(); // REALIZA EL HEALTH CHECK (Bonus Point)
 
-    const startTime = Date.now(); // Inicia cronómetro para medir performance
-    const response = await bookingClient.createBooking(dynamicBookingData); // Llama al método POST y espera la respuesta del servidor
-    expect(Date.now() - startTime, 'POST response time exceeded limit').toBeLessThan(1000); // Valida performance del POST
+    await bookingClient.checkHealth(); // EJECUTA EL HEALTH CHECK (Bonus Point del taller)
+
+    const startTime = Date.now(); // Inicia la medición de tiempo de respuesta
+    const response = await bookingClient.createBooking(dynamicBookingData); // Envía la creación de reserva
+    expect(Date.now() - startTime, 'POST response time exceeded limit').toBeLessThan(1000); // Valida que sea menor a 1 segundo
 
     // 3. VALIDACIÓN: Verificamos que la respuesta del servidor coincida con lo esperado
     expect(response.bookingid).toBeDefined(); // Comprueba que la API haya generado y devuelto un ID único para la reserva
@@ -36,8 +36,7 @@ test.describe('Booking Management CRUD', () => { // Inicia la agrupación de cas
     
     // VALIDACIÓN DE ESQUEMA (CONTRATO): Validamos que la estructura del objeto 'booking' sea la correcta
     const isPostSchemaValid = validate(response.booking); // Ejecuta la validación del esquema sobre la respuesta
-    expect(isPostSchemaValid, `POST schema error: ${JSON.stringify(validate.errors)}`).toBe(true); // Falla si el contrato se rompió
-    expect(isPostSchemaValid, `Errors found in POST contract: ${ajv.errorsText(validate.errors)}`).toBe(true); // Valida el esquema y genera un mensaje legible en inglés si falla
+    expect(isPostSchemaValid, `Errors found in POST contract: ${ajv.errorsText(validate.errors)}`).toBe(true); // Valida el contrato y genera un mensaje de error legible
 
     expect(response.booking.firstname).toBe(dynamicBookingData.firstname); // Verifica que el nombre en la respuesta sea igual al enviado
     expect(response.booking.lastname).toBe(dynamicBookingData.lastname); // Valida que el apellido guardado coincida con el generado por la fábrica
@@ -49,8 +48,7 @@ test.describe('Booking Management CRUD', () => { // Inicia la agrupación de cas
 
     // VALIDACIÓN DE ESQUEMA (CONTRATO): Validamos que la respuesta del GET cumpla con el contrato
     const isGetSchemaValid = validate(bookingDetails); // Ejecuta la validación del esquema sobre los detalles obtenidos
-    expect(isGetSchemaValid, `GET schema error: ${JSON.stringify(validate.errors)}`).toBe(true); // Falla si el contrato se rompió
-    expect(isGetSchemaValid, `Errors found in GET contract: ${ajv.errorsText(validate.errors)}`).toBe(true); // Valida el esquema y genera un mensaje legible en inglés si falla
+    expect(isGetSchemaValid, `Errors found in GET contract: ${ajv.errorsText(validate.errors)}`).toBe(true); // Valida el contrato del método GET
 
     // 5. VALIDACIÓN DE DATOS PERSISTIDOS: Comparamos que los datos en la base coincidan con los originales
     expect(bookingDetails.firstname).toBe(dynamicBookingData.firstname); // Comprueba que el nombre persistido sea el correcto
@@ -68,8 +66,7 @@ test.describe('Booking Management CRUD', () => { // Inicia la agrupación de cas
     
     // VALIDACIÓN DE ESQUEMA (CONTRATO): Validamos que la respuesta del PATCH mantenga la estructura correcta
     const isPatchSchemaValid = validate(patchedBooking); // Ejecuta la validación del esquema sobre la reserva actualizada
-    expect(isPatchSchemaValid, `PATCH schema error: ${JSON.stringify(validate.errors)}`).toBe(true); // Falla si el contrato se rompió
-    expect(isPatchSchemaValid, `Errors found in PATCH contract: ${ajv.errorsText(validate.errors)}`).toBe(true); // Valida el esquema y genera un mensaje legible en inglés si falla
+    expect(isPatchSchemaValid, `Errors found in PATCH contract: ${ajv.errorsText(validate.errors)}`).toBe(true); // Valida el contrato después de la actualización
 
     // 8. VALIDACIÓN DE ACTUALIZACIÓN: Verificamos que el cambio se haya aplicado
     expect(patchedBooking.firstname).toBe(updatedFirstName); // Confirma que el nombre ahora es el valor actualizado

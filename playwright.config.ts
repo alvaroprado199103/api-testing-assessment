@@ -29,6 +29,14 @@ export default defineConfig({ // Exporta la configuración global del framework 
   // Formatos de reporte
   reporter: [['html'], ['list']], // Genera un reporte visual en HTML y un resumen detallado en la terminal
 
+  // Definición de proyectos (necesario para filtrar ejecuciones por nombre)
+  projects: [
+    {
+      name: 'chromium', // Nombre del proyecto que busca GitHub Actions
+      use: { browserName: 'chromium' }, // Indica que usará el motor Chromium
+    },
+  ],
+
   // Opciones base para las peticiones
   use: { // Configuración compartida para todas las pruebas
     // Dirección del servidor
