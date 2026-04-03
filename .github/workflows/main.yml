@@ -1,0 +1,28 @@
+name: Playwright API Tests # Define el nombre del flujo de trabajo en la pestaña Actions
+on: # Especifica los eventos que activan el pipeline automáticamente
+  push: # Se dispara cuando realizas un push de código al repositorio
+    branches: [main, master] # Limita la ejecución a las ramas principales del proyecto
+  pull_request: # Se dispara cuando se abre un PR hacia la rama principal
+    branches: [main, master] # Asegura que los cambios propuestos pasen las pruebas
+jobs: # Lista de tareas que se ejecutarán en servidores de GitHub
+  test: # Identificador único para el trabajo de ejecución de pruebas
+    timeout-minutes: 60 # Establece un límite de una hora para evitar procesos infinitos
+    runs-on: ubuntu-latest # Selecciona una máquina virtual con la última versión de Ubuntu
+    steps: # Secuencia de comandos a ejecutar dentro del servidor
+      - uses: actions/checkout@v4 # Descarga el código fuente de tu repositorio en el servidor
+      - uses: actions/setup-node@v4 # Instala y configura el entorno de Node.js en la máquina
+        with: # Parámetros adicionales para la configuración de Node
+          node-version: 20 # Define la versión 20 de Node.js para consistencia con el entorno local
+      - name: Install dependencies # Etiqueta para el paso de instalación de librerías
+        run: npm install # Ejecuta el comando para descargar las dependencias del package.json
+      - name: Run Playwright tests # Etiqueta para el paso de ejecución de la suite de pruebas
+        run: npx playwright test # Lanza la ejecución de Playwright para validar la API
+        env: # Bloque para inyectar variables sensibles de forma segura
+          BOOKER_USERNAME: ${{ secrets.BOOKER_USERNAME }} # Inyecta el usuario desde los Secrets de GitHub
+          BOOKER_PASSWORD: ${{ secrets.BOOKER_PASSWORD }} # Inyecta la contraseña desde los Secrets de GitHub
+      - uses: actions/upload-artifact@v4 # Sube el reporte generado como un archivo descargable
+        if: always() # Garantiza que el reporte se genere incluso si las pruebas fallan
+        with: # Detalles del archivo a subir como artefacto
+          name: playwright-report # Nombre que recibirá el archivo ZIP en GitHub
+          path: playwright-report/ # Ruta de la carpeta que contiene el reporte HTML de Playwright
+          retention-days: 30 # Tiempo que el archivo estará disponible para su descarga
