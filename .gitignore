@@ -1,0 +1,11 @@
+node_modules/ # Omite la carpeta de librerías instaladas por npm
+.env # Omite el archivo de variables de entorno con credenciales sensibles
+test-results/ # Omite los archivos de resultados generados en ejecuciones locales
+playwright-report/ # Omite el reporte HTML generado localmente
+blob-report/ # Omite reportes de fragmentos de Playwright
+playwright/.cache/ # Omite el caché de los navegadores de Playwright
+dist/ # Omite la carpeta de salida de compilación de TypeScript
+.DS_Store # Omite archivos de configuración de sistema de macOS
+npm-debug.log* # Omite archivos de log de errores de npm
+yarn-debug.log* # Omite archivos de log de errores de yarn
+yarn-error.log* # Omite archivos de log de errores de yarn
