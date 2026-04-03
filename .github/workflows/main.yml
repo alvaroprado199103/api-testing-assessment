@@ -1,32 +1,33 @@
-name: Playwright API Tests # Define el nombre del flujo de trabajo en la pestaña Actions
-on: # Especifica los eventos que activan el pipeline automáticamente
-  push: # Se dispara cuando realizas un push de código al repositorio
-    branches: [main, master] # Limita la ejecución a las ramas principales del proyecto
-  pull_request: # Se dispara cuando se abre un PR hacia la rama principal
-    branches: [main, master] # Asegura que los cambios propuestos pasen las pruebas
-jobs: # Lista de tareas que se ejecutarán en servidores de GitHub
-  test: # Identificador único para el trabajo de ejecución de pruebas
-    timeout-minutes: 60 # Establece un límite de una hora para evitar procesos infinitos
-    runs-on: ubuntu-latest # Selecciona una máquina virtual con la última versión de Ubuntu
-    env: # Variables de entorno globales para el runner
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # Fuerza el uso de Node.js 24 para evitar avisos de deprecación
-    steps: # Secuencia de comandos a ejecutar dentro del servidor
-      - uses: actions/checkout@v4 # Descarga el código fuente de tu repositorio en el servidor
-      - uses: actions/setup-node@v4 # Instala y configura el entorno de Node.js en la máquina
-        with: # Parámetros adicionales para la configuración de Node
-          node-version: 24 # Actualizado a la versión 24 para cumplir con los estándares modernos de GitHub
-      - name: Install dependencies # Etiqueta para el paso de instalación de librerías
-        run: npm install # Ejecuta el comando para descargar las dependencias del package.json
-      - name: Install Playwright Browsers # Paso necesario para instalar los motores de ejecución en el servidor
-        run: npx playwright install --with-deps # Instala los navegadores y sus dependencias de sistema necesarias
-      - name: Run Playwright tests # Etiqueta para el paso de ejecución de la suite de pruebas
-        run: npx playwright test --project=chromium # Ejecuta los tests usando el motor de chromium
-        env: # Bloque para inyectar variables sensibles de forma segura
-          BOOKER_USERNAME: ${{ secrets.BOOKER_USERNAME }} # Inyecta el usuario desde los Secrets de GitHub
-          BOOKER_PASSWORD: ${{ secrets.BOOKER_PASSWORD }} # Inyecta la contraseña desde los Secrets de GitHub
-      - uses: actions/upload-artifact@v4 # Sube el reporte generado como un archivo descargable
-        if: always() # Garantiza que el reporte se genere incluso si las pruebas fallan
-        with: # Detalles del archivo a subir como artefacto
-          name: playwright-report # Nombre que recibirá el archivo ZIP en GitHub
-          path: playwright-report/ # Ruta de la carpeta que contiene el reporte HTML de Playwright
-          retention-days: 30 # Tiempo que el archivo estará disponible para su descarga
+name: Playwright API Tests
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # Silences deprecation warnings for Node 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm install
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npx playwright test --project=chromium
+        env:
+          BOOKER_USERNAME: ${{ secrets.BOOKER_USERNAME }}
+          BOOKER_PASSWORD: ${{ secrets.BOOKER_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

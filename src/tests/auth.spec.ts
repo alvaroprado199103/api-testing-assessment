@@ -1,41 +1,31 @@
-import { test, expect } from '@playwright/test'; // Importa las herramientas base de Playwright para ejecutar pruebas
-import { AuthClient } from '../api/AuthClient'; // Importa la clase de servicio de autenticación desde el directorio api
-import Ajv from 'ajv'; // Importa el validador de esquemas JSON
-import addFormats from 'ajv-formats'; // Importa el complemento para validar formatos específicos
-import authSchema from '../data/schemas/auth.schema.json'; // Importa el esquema para el token
+import { test, expect } from '@playwright/test';
+import { AuthClient } from '../api/AuthClient';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
+import authSchema from '../data/schemas/auth.schema.json';
 
 /**
- * Conjunto de pruebas de humo para verificar la conectividad y seguridad.
- * Garantiza que la comunicación básica con la API de Booker sea estable.
+ * Smoke tests for authentication security.
  */
-test.describe('Authentication Smoke Tests', () => { // Inicia el bloque descriptivo para pruebas de autenticación
+test.describe('Authentication Smoke Tests', () => {
   
-  const ajv = new Ajv(); // Crea una instancia del validador
-  addFormats(ajv); // Añade soporte para formatos al validador (como fechas o emails)
+  const ajv = new Ajv();
+  addFormats(ajv);
 
-  // Caso de prueba específico para la creación del token
-  test('Should generate a valid security token', async ({ request }) => { // Utiliza el contexto de petición inyectado por el test runner
-    const startTime = Date.now(); // Marca el inicio de la petición
+  test('Should generate a valid security token', async ({ request }) => {
+    const startTime = Date.now();
+    const authClient = new AuthClient(request);
+    const token = await authClient.createToken();
 
-    // Crea una instancia del cliente de autenticación para realizar la operación
-    const authClient = new AuthClient(request); // Pasa el motor de peticiones a nuestro cliente personalizado
+    const duration = Date.now() - startTime;
+    expect(duration, 'Auth response time is too high').toBeLessThan(1500);
 
-    // Ejecuta la llamada para generar un nuevo token
-    const token = await authClient.createToken(); // Espera a que la promesa resuelva el valor del token desde la API
+    // Schema Validation
+    const validate = ajv.compile(authSchema);
+    const isValid = validate({ token });
+    expect(isValid, `Auth schema error: ${ajv.errorsText(validate.errors)}`).toBe(true);
 
-    const duration = Date.now() - startTime; // Calcula cuánto tardó la API
-    expect(duration, 'Auth response time is too high').toBeLessThan(1500); // Valida que responda en menos de 1.5s
-
-    // VALIDACIÓN DE ESQUEMA: Asegura que la respuesta tenga el formato { token: string }
-    const validate = ajv.compile(authSchema); // Prepara el esquema
-    const isValid = validate({ token }); // Valida la estructura
-    expect(isValid, `Auth schema error: ${ajv.errorsText(validate.errors)}`).toBe(true); // Falla si el contrato se rompe
-
-    // Valida que el token exista en la respuesta
-    expect(token).toBeDefined(); // Falla si el servidor no devolvió la propiedad token
-    // Valida que el token sea de tipo cadena de texto
-    expect(typeof token).toBe('string'); // Asegura que el formato del dato recibido sea el correcto según el contrato
-    // Valida que el token tenga contenido real
-    expect(token.length).toBeGreaterThan(0); // Verifica que la cadena no esté vacía para ser usada después
-  }); // Cierra el caso de prueba individual
-}); // Cierra el bloque descriptivo general
+    expect(token).toBeDefined();
+    expect(token.length).toBeGreaterThan(0);
+  });
+});
