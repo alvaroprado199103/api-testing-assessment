@@ -23,7 +23,12 @@ test.describe('Booking Management CRUD', () => { // Inicia la agrupación de cas
 
     // 2. ACCIÓN: Inicializamos el cliente y enviamos la petición a la API
     const bookingClient = new BookingClient(request); // Instancia el cliente de reservas pasando el contexto de petición actual
+    
+    await bookingClient.checkHealth(); // REALIZA EL HEALTH CHECK (Bonus Point)
+
+    const startTime = Date.now(); // Inicia cronómetro para medir performance
     const response = await bookingClient.createBooking(dynamicBookingData); // Llama al método POST y espera la respuesta del servidor
+    expect(Date.now() - startTime, 'POST response time exceeded limit').toBeLessThan(1000); // Valida performance del POST
 
     // 3. VALIDACIÓN: Verificamos que la respuesta del servidor coincida con lo esperado
     expect(response.bookingid).toBeDefined(); // Comprueba que la API haya generado y devuelto un ID único para la reserva

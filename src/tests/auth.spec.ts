@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'; // Importa las herramientas base de Playwright para ejecutar pruebas
 import { AuthClient } from '../api/AuthClient'; // Importa la clase de servicio de autenticación desde el directorio api
+import Ajv from 'ajv'; // Importa el validador de esquemas
+import authSchema from '../data/schemas/auth.schema.json'; // Importa el esquema del token
 
 /**
  * Conjunto de pruebas de humo para verificar la conectividad y seguridad.
