@@ -8,11 +8,13 @@ jobs: # Lista de tareas que se ejecutarán en servidores de GitHub
   test: # Identificador único para el trabajo de ejecución de pruebas
     timeout-minutes: 60 # Establece un límite de una hora para evitar procesos infinitos
     runs-on: ubuntu-latest # Selecciona una máquina virtual con la última versión de Ubuntu
+    env: # Variables de entorno globales para el runner
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # Fuerza el uso de Node.js 24 para evitar avisos de deprecación
     steps: # Secuencia de comandos a ejecutar dentro del servidor
       - uses: actions/checkout@v4 # Descarga el código fuente de tu repositorio en el servidor
       - uses: actions/setup-node@v4 # Instala y configura el entorno de Node.js en la máquina
         with: # Parámetros adicionales para la configuración de Node
-          node-version: 20 # Volvemos a la versión 20 LTS para máxima estabilidad con las acciones v4
+          node-version: 24 # Actualizado a la versión 24 para cumplir con los estándares modernos de GitHub
       - name: Install dependencies # Etiqueta para el paso de instalación de librerías
         run: npm install # Ejecuta el comando para descargar las dependencias del package.json
       - name: Install Playwright Browsers # Paso necesario para instalar los motores de ejecución en el servidor
