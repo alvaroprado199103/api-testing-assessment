@@ -1,26 +1,15 @@
 {
     "compilerOptions": {
-        /* Establece la versión de JavaScript para el código de salida */
         "target": "ESNext",
-        /* Especifica qué sistema de módulos se utilizará (CommonJS es estándar para Node) */
         "module": "commonjs",
-        /* Resuelve los módulos buscando en las carpetas de node_modules al estilo Node.js */
         "moduleResolution": "node",
-        /* Permite la interoperabilidad entre módulos CommonJS y ES (import/require) */
         "esModuleInterop": true,
-        /* Asegura que el uso de mayúsculas en los nombres de archivos sea consistente */
         "forceConsistentCasingInFileNames": true,
-        /* Habilita todas las comprobaciones estrictas de tipos para mayor robustez */
         "strict": true,
-        /* Omite la comprobación de tipos de los archivos de declaración de librerías externas */
         "skipLibCheck": true,
-        /* Directorio base para resolver nombres de módulos no relativos */
         "baseUrl": ".",
-        /* Define la raíz de los archivos TypeScript dentro del proyecto */
         "rootDir": ".",
-        /* Permite la importación de archivos con extensión .json como módulos */
         "resolveJsonModule": true,
-        /* Permite importaciones por defecto desde módulos que no las tienen */
         "esModuleInterop": true
     }
 }
